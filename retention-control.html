@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retention Control — Monserrat Álvarez</title>
+<style>
+  :root{
+    --cream:#FAFAF6;
+    --ink:#14201A;
+    --ink-soft:#5B6259;
+    --green:#0B5D34;
+    --green-soft:#2F7A4E;
+    --green-bright:#1C8C4E;
+    --green-tint:#EAF3EC;
+    --orange:#E2672B;
+    --orange-deep:#C1551F;
+    --lavender:#C9C2E8;
+    --lavender-soft:#EFEBFA;
+    --line:#E2E1D8;
+    --white:#FFFFFF;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--cream); color:var(--ink); font-family:var(--sans); line-height:1.5; -webkit-font-smoothing:antialiased;}
+  ::selection{background:var(--lavender); color:var(--ink);}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  section{padding:120px 0;}
+  section.tight{padding:96px 0;}
+  section.tint{background:var(--green-tint);}
+  h1,h2,h3,h4{font-weight:600; letter-spacing:-0.02em; line-height:1.08;}
+  h2{font-size:clamp(28px,3.6vw,44px); font-weight:600; max-width:780px;}
+  p.lede{font-size:19px; color:var(--ink-soft); max-width:640px; line-height:1.6;}
+
+  .kicker{font-size:13px; color:var(--green); font-weight:600; display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+  .kicker::before{content:''; width:22px; height:1px; background:var(--green); display:inline-block;}
+  .role-tag{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; color:var(--green-soft); background:var(--white); border:1px solid var(--line); padding:6px 12px; border-radius:100px; margin-top:28px;}
+  .role-tag::before{content:'●'; color:var(--orange); font-size:8px;}
+  .verified-tag{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; color:#fff; background:var(--green); padding:6px 14px; border-radius:100px;}
+  .verified-tag::before{content:'✓'; font-weight:700;}
+  .illustrative-tag{font-family:var(--mono); font-size:10.5px; letter-spacing:0.05em; color:var(--ink-soft); background:var(--cream); border:1px dashed var(--line); padding:4px 10px; border-radius:100px; display:inline-block; margin-bottom:16px;}
+  .disclaimer{display:flex; gap:14px; background:var(--lavender-soft); border:1px solid #D9D2F0; border-radius:10px; padding:18px 22px; font-size:13.5px; color:#4A4468; margin:32px 0 8px;}
+  .disclaimer .mark{font-family:var(--mono); font-weight:700; color:#6C5FA8;}
+  .section-head{display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap;}
+
+  /* UTILITY + NAV */
+  .utility-bar{background:var(--ink); color:#C9C7BC; font-size:11.5px;}
+  .utility-inner{display:flex; justify-content:space-between; align-items:center; height:34px;}
+  @media (max-width:760px){ .utility-inner span:last-child{display:none;} }
+  header.nav{position:sticky; top:0; z-index:50; background:rgba(250,250,246,0.88); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  .nav-inner{max-width:1180px; margin:0 auto; padding:0 32px; display:flex; align-items:center; justify-content:space-between; height:66px;}
+  .brand{font-weight:700; font-size:15px; letter-spacing:-0.01em; display:flex; align-items:center; gap:9px;}
+  .brand .mark{width:26px; height:26px; border-radius:50%; background:var(--green); display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .brand .mark svg{width:14px; height:14px;}
+  .brand span{color:var(--green);}
+  nav.links{display:flex; gap:24px; font-size:14px; color:var(--ink-soft);}
+  nav.links a:hover{color:var(--ink);}
+  .cta-btn{background:var(--ink); color:var(--cream); font-size:14px; padding:9px 18px; border-radius:100px; font-weight:500; white-space:nowrap;}
+  .cta-btn:hover{background:var(--green);}
+  @media (max-width:940px){ nav.links{display:none;} }
+
+  /* HERO */
+  .hero{padding:96px 0 80px; display:grid; grid-template-columns:1.1fr 0.9fr; gap:64px; align-items:center; position:relative; overflow:hidden;}
+  .hero::before{
+    content:''; position:absolute; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='130' height='130' viewBox='0 0 130 130'%3E%3Cg fill='%230B5D34' fill-opacity='0.05'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3Ccircle cx='34' cy='20' r='3'/%3E%3Ccircle cx='48' cy='20' r='3' fill-opacity='0.5'/%3E%3Ccircle cx='90' cy='90' r='3'/%3E%3Ccircle cx='104' cy='90' r='3'/%3E%3Ccircle cx='118' cy='90' r='3' fill-opacity='0.5'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat:repeat; pointer-events:none; z-index:0;
+  }
+  .hero-copy, .control-center{position:relative; z-index:1;}
+  @media (max-width:940px){ .hero{grid-template-columns:1fr;} }
+  .hero h1{font-size:clamp(36px,5vw,58px); margin-bottom:26px;}
+  .hero p.lede{margin-bottom:20px;}
+  .badges{display:flex; gap:10px; flex-wrap:wrap; margin-top:30px;}
+  .badge{font-family:var(--mono); font-size:11px; letter-spacing:0.02em; background:var(--white); border:1px solid var(--line); padding:7px 12px; border-radius:100px; color:var(--ink-soft);}
+
+  .control-center{background:var(--ink); color:var(--cream); border-radius:14px; padding:28px; overflow:hidden; box-shadow:0 16px 40px rgba(11,93,52,0.18);}
+  .control-center::before{content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px; background:radial-gradient(circle, rgba(28,140,78,0.4), transparent 70%);}
+  .cc-head{display:flex; justify-content:space-between; align-items:center; font-family:var(--mono); font-size:11px; color:#B9B7AC; margin-bottom:18px; letter-spacing:0.04em;}
+  .cc-head .dot{width:7px; height:7px; border-radius:50%; background:#5FBF7A; display:inline-block; margin-right:6px;}
+  .cc-row{display:flex; justify-content:space-between; align-items:baseline; padding:13px 0; border-bottom:1px solid rgba(255,255,255,0.09); font-size:14px;}
+  .cc-row:last-of-type{border-bottom:none;}
+  .cc-row .val{font-family:var(--mono); font-size:15px;}
+  .up{color:#7FD199;} .down{color:#E8896B;}
+  .cc-footer{margin-top:20px; padding-top:18px; border-top:1px dashed rgba(255,255,255,0.16); font-size:13px; color:#D8D6CC;}
+  .cc-footer strong{display:block; color:#fff; margin-bottom:4px; font-weight:600;}
+
+  /* QUICK NAV TILES */
+  .shop-row{padding:0 0 64px;}
+  .tiles{display:flex; justify-content:space-between; gap:8px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:28px 0;}
+  .tile{display:flex; flex-direction:column; align-items:center; gap:10px; font-size:12.5px; font-weight:500; color:var(--ink); flex:1; text-align:center;}
+  .tile-circle{width:56px; height:56px; border-radius:50%; background:var(--green-tint); color:var(--green); display:flex; align-items:center; justify-content:center; transition:background 0.2s ease, color 0.2s ease, transform 0.2s ease;}
+  .tile-circle svg{width:22px; height:22px;}
+  .tile:hover .tile-circle{background:var(--green); color:#fff; transform:translateY(-2px);}
+  .tile.current{color:var(--green);}
+  .tile.current .tile-circle{background:var(--green); color:#fff; box-shadow:0 0 0 4px var(--green-tint);}
+  @media (max-width:760px){ .tiles{flex-wrap:wrap;} .tile{flex:1 1 30%;} }
+
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:48px;}
+  @media (max-width:860px){ .grid-2{grid-template-columns:1fr;} }
+  .card{background:var(--white); border:1px solid var(--line); border-radius:10px; padding:26px; box-shadow:0 1px 2px rgba(20,32,26,0.04); transition:box-shadow 0.2s ease, transform 0.2s ease;}
+  .card:hover{box-shadow:0 8px 20px rgba(20,32,26,0.07); transform:translateY(-2px);}
+  .card h4{font-size:16px; margin-bottom:10px;}
+  .card p{font-size:14.5px; color:var(--ink-soft); line-height:1.55;}
+
+  /* LIFECYCLE STAGES */
+  .lifecycle{margin-top:48px; display:flex; align-items:stretch; gap:0; flex-wrap:wrap; justify-content:center;}
+  .lc-stage{
+    flex:1; min-width:150px; background:var(--white); border:1px solid var(--line); border-radius:10px;
+    padding:20px 18px; text-align:center; position:relative; box-shadow:0 1px 2px rgba(20,32,26,0.04);
+  }
+  .lc-stage.mine{border:2px solid var(--green); background:var(--green-tint);}
+  .lc-stage .lc-month{font-family:var(--mono); font-size:11px; color:var(--ink-soft); margin-bottom:8px;}
+  .lc-stage h4{font-size:15px; margin-bottom:6px;}
+  .lc-stage p{font-size:12.5px; color:var(--ink-soft); line-height:1.4;}
+  .lc-arrow{display:flex; align-items:center; color:var(--orange-deep); font-size:18px; padding:0 6px;}
+  @media (max-width:860px){ .lc-arrow{display:none;} .lifecycle{flex-direction:column;} }
+
+  /* KPI GRID */
+  .kpi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:36px;}
+  @media (max-width:860px){ .kpi-grid{grid-template-columns:repeat(2,1fr);} }
+  .kpi{background:var(--white); border:1px solid var(--line); border-radius:10px; padding:22px; box-shadow:0 1px 2px rgba(20,32,26,0.04);}
+  .kpi .label{font-size:12.5px; color:var(--ink-soft); margin-bottom:10px;}
+  .kpi .value{font-family:var(--mono); font-size:26px; font-weight:600;}
+  .kpi .trend{font-size:12.5px; margin-top:6px; font-family:var(--mono);}
+
+  /* TOOL */
+  .tool{margin-top:44px; background:var(--white); border:1px solid var(--line); border-radius:10px; padding:32px; box-shadow:0 2px 8px rgba(20,32,26,0.05);}
+  .tool-controls{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px;}
+  @media (max-width:760px){ .tool-controls{grid-template-columns:1fr;} }
+  .tool-controls label{display:block; font-size:12px; color:var(--ink-soft); margin-bottom:8px; font-family:var(--mono);}
+  .tool-controls select{width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--cream); color:var(--ink); font-family:var(--sans);}
+  .tool-generate{background:var(--green); color:#fff; border:none; padding:12px 22px; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer;}
+  .tool-generate:hover{background:var(--green-bright);}
+  .tool-output{margin-top:26px; border-top:1px solid var(--line); padding-top:24px; display:none;}
+  .tool-output.show{display:block;}
+  .tool-output .rec-title{font-size:19px; font-weight:600; margin-bottom:16px;}
+  .tool-output dl{display:grid; grid-template-columns:150px 1fr; row-gap:14px; font-size:14px;}
+  .tool-output dt{font-family:var(--mono); font-size:11px; color:var(--ink-soft); padding-top:2px;}
+  .tool-output dd{color:var(--ink-soft); line-height:1.5;}
+
+  /* REAL EVIDENCE */
+  .evidence{margin-top:36px; background:var(--white); border:1px solid var(--line); border-radius:12px; padding:34px; box-shadow:0 4px 16px rgba(20,32,26,0.06);}
+  .evidence-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:26px;}
+  @media (max-width:760px){ .evidence-stats{grid-template-columns:1fr;} }
+  .evidence-stat{background:var(--green-tint); border-radius:10px; padding:20px;}
+  .evidence-num{font-family:var(--mono); font-size:26px; font-weight:600; color:var(--green);}
+  .evidence-label{font-size:12.5px; color:var(--ink-soft); margin-top:6px;}
+
+  /* WORKFLOW TIMELINE */
+  .timeline-track{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:48px;}
+  @media (max-width:860px){ .timeline-track{grid-template-columns:1fr;} }
+  .tl-phase{border-top:3px solid var(--orange); padding-top:20px;}
+  .tl-phase .pct{font-family:var(--mono); font-size:12px; color:var(--orange-deep); margin-bottom:8px;}
+  .tl-phase h4{font-size:18px; margin-bottom:14px;}
+  .tl-phase ul{list-style:none; font-size:14px; color:var(--ink-soft); display:flex; flex-direction:column; gap:8px;}
+  .tl-phase li::before{content:'—'; margin-right:8px; color:var(--line);}
+
+  /* PROFILE */
+  .stack{margin-top:48px; display:flex; flex-direction:column; align-items:center; gap:0; max-width:440px; margin-left:auto; margin-right:auto;}
+  .stack-item{font-family:var(--mono); font-size:13.5px; background:var(--white); border:1px solid var(--line); padding:12px 20px; border-radius:8px; width:100%; text-align:center;}
+  .stack-plus{font-family:var(--mono); color:var(--orange-deep); padding:4px 0; font-size:13px;}
+  .stack-arrow{padding:8px 0; color:var(--line); font-size:18px;}
+  .stack-result{font-weight:600; background:var(--ink); color:var(--cream); border-radius:8px; padding:14px 20px; width:100%; text-align:center; font-size:15px;}
+  .proof-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:44px;}
+  @media (max-width:860px){ .proof-grid{grid-template-columns:1fr;} }
+  .proof{background:var(--white); border:1px solid var(--line); border-radius:10px; padding:24px; box-shadow:0 1px 2px rgba(20,32,26,0.04);}
+  .proof .tag{font-family:var(--mono); font-size:11px; color:var(--orange-deep); margin-bottom:10px;}
+  .proof .big{font-size:20px; font-weight:600; margin-bottom:8px;}
+  .proof p{font-size:13.5px; color:var(--ink-soft);}
+
+  /* FINAL */
+  .final{background:var(--ink); color:var(--cream); text-align:center; padding:130px 0;}
+  .final h2{color:var(--cream); margin:0 auto 20px; max-width:640px;}
+  .final p{color:#C9C7BC; max-width:480px; margin:0 auto 34px; font-size:16px;}
+  .final .cta-btn{background:var(--orange); color:#fff; padding:14px 30px; font-size:15px;}
+  .final .cta-btn:hover{background:var(--orange-deep);}
+  footer.foot{padding:34px 0; font-size:12.5px; color:var(--ink-soft); display:flex; justify-content:space-between; border-top:1px solid var(--line);}
+  @media (max-width:600px){ footer.foot{flex-direction:column; gap:8px;} }
+</style>
+</head>
+<body>
+
+<div class="utility-bar">
+  <div class="wrap utility-inner">
+    <span>Independent case study · Not affiliated with or endorsed by N26</span>
+    <span>Built for the Senior CRM Specialist (Engagement & Retention) application · Berlin</span>
+  </div>
+</div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 12h6M3 12l3-3M3 12l3 3"/></svg></span>RETENTION <span>CONTROL</span></div>
+    <nav class="links">
+      <a href="#case-study">Case Study</a>
+      <a href="#lifecycle">Lifecycle</a>
+      <a href="#scorecard">Scorecard</a>
+      <a href="#builder">Playbook Builder</a>
+      <a href="#about">About</a>
+    </nav>
+    <a href="#talk" class="cta-btn">Let's talk →</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap" style="display:contents;">
+  <div class="hero-copy">
+    <div class="kicker">Independent CRM & Retention case study</div>
+    <h1>What happens after month two?</h1>
+    <p class="lede">Onboarding gets a customer to try the product. What I care about is the much harder problem: keeping them there once the novelty wears off.</p>
+    <p class="lede">This is an independent case study on how I'd own engagement and retention CRM for N26 — reading where customers quietly go dormant, and building the automated campaigns that bring them back.</p>
+    <div class="badges">
+      <span class="badge">CRM & LIFECYCLE</span>
+      <span class="badge">RETENTION & REACTIVATION</span>
+      <span class="badge">DATA-DRIVEN TESTING</span>
+    </div>
+    <div class="role-tag">Independent analysis · Publicly available information · September 2026</div>
+  </div>
+
+  <div class="control-center">
+    <div class="cc-head"><span><span class="dot"></span>RETENTION SCORECARD</span><span>LIVE VIEW</span></div>
+    <div class="cc-row"><span>30-day Retention</span><span class="val up">71.4%</span></div>
+    <div class="cc-row"><span>Reactivation Rate</span><span class="val up">12.8%</span></div>
+    <div class="cc-row"><span>Campaign CTR</span><span class="val up">6.2%</span></div>
+    <div class="cc-row"><span>Dormancy (60d+)</span><span class="val down">18.3%</span></div>
+    <div class="cc-footer"><strong>Flagged today:</strong>Dormancy ticking up in the 60-90 day segment</div>
+  </div>
+  </div>
+</section>
+
+<section class="shop-row">
+  <div class="wrap">
+    <div class="tiles">
+      <a href="#case-study" class="tile">
+        <span class="tile-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V6a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v13"/><path d="M6 22a2 2 0 0 1-2-2V6"/><path d="M6 22h13a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H6a2 2 0 0 0 0 4z"/></svg></span>
+        <span>Case Study</span>
+      </a>
+      <a href="#lifecycle" class="tile">
+        <span class="tile-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 12h6M3 12l3-3M3 12l3 3"/></svg></span>
+        <span>Lifecycle</span>
+      </a>
+      <a href="#scorecard" class="tile">
+        <span class="tile-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-4"/></svg></span>
+        <span>Scorecard</span>
+      </a>
+      <a href="#builder" class="tile">
+        <span class="tile-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+        <span>Playbook Builder</span>
+      </a>
+      <a href="#about" class="tile">
+        <span class="tile-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+        <span>About</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="case-study">
+  <div class="wrap">
+    <div class="kicker">The case study</div>
+    <h2>Where retention is won or lost.</h2>
+    <p class="lede" style="margin-top:16px;">At Tobipets, I engineered the automated communication workflows and lifecycle funnels that lifted customer loyalty by 15% — the same discipline this case study applies to N26's engagement and retention CRM, month two onwards.</p>
+
+    <div class="disclaimer">
+      <span class="mark">Disclaimer</span>
+      <span>This is an independent strategic exercise based on publicly available information and illustrative datasets. It does not use confidential N26 data.</span>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h4>Why month two?</h4>
+        <p>The first month is onboarding's job — set up the account, first transaction, first habit. What happens after that determines whether a customer becomes a long-term user or a quiet churn statistic. That's the segment this role owns, and where CRM work is hardest to get right.</p>
+      </div>
+      <div class="card">
+        <h4>The core problem</h4>
+        <p>Retention isn't one campaign — it's a system that has to catch three different moments: the customer settling into a habit, the customer drifting, and the customer who's already gone quiet. Each needs a different message, trigger and channel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="lifecycle" class="tint">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="kicker">The lifecycle</div>
+        <h2>Where this role's ownership starts.</h2>
+      </div>
+      <div class="role-tag" style="margin-top:0;">ROLE ALIGNMENT → OWN THE CUSTOMER JOURNEY FROM MONTH TWO</div>
+    </div>
+
+    <div class="lifecycle">
+      <div class="lc-stage"><div class="lc-month">MONTH 0–1</div><h4>Onboarding</h4><p>Account setup, first transaction. Owned upstream.</p></div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-stage mine"><div class="lc-month">MONTH 2+</div><h4>Habit-forming</h4><p>Engagement CRM starts here — this role.</p></div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-stage mine"><div class="lc-month">30–90 DAYS</div><h4>Drifting</h4><p>Usage dropping. Early-warning campaigns matter most.</p></div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-stage mine"><div class="lc-month">90+ DAYS</div><h4>Dormant</h4><p>Reactivation is a different mechanic than retention.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="scorecard">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Retention scorecard</div>
+        <h2>What "working" looks like, this week.</h2>
+      </div>
+      <div class="role-tag" style="margin-top:0;">ROLE ALIGNMENT → OWN AND REPORT ON YOUR KPIs</div>
+    </div>
+    <span class="illustrative-tag" style="margin-top:20px;">ILLUSTRATIVE DATA</span>
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="label">30-day Retention</div><div class="value">71.4%</div><div class="trend up">↑ 1.8pp vs. plan</div></div>
+      <div class="kpi"><div class="label">Reactivation Rate</div><div class="value">12.8%</div><div class="trend up">↑ 2.1pp</div></div>
+      <div class="kpi"><div class="label">Campaign CTR</div><div class="value">6.2%</div><div class="trend up">↑ 0.4pp</div></div>
+      <div class="kpi"><div class="label">Dormancy (60d+)</div><div class="value">18.3%</div><div class="trend down">↑ 1.1pp (bad)</div></div>
+      <div class="kpi"><div class="label">A/B Test Lift</div><div class="value">+9.4%</div><div class="trend up">On latest send-time test</div></div>
+      <div class="kpi"><div class="label">Automation Uptime</div><div class="value">99.2%</div><div class="trend up">Workflow health</div></div>
+    </div>
+    <p class="lede" style="margin-top:24px; font-size:15px;"><strong style="color:var(--ink);">My read:</strong> reactivation and CTR are both trending well, but dormancy in the 60-90 day window is creeping up — that's the segment I'd build the next campaign around, not the one already performing.</p>
+  </div>
+</section>
+
+<section id="builder" class="tint">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Retention Playbook Builder</div>
+        <h2>A small tool, not a slide.</h2>
+      </div>
+      <div class="role-tag" style="margin-top:0;">ROLE ALIGNMENT → CONCEPTUALISE, SET UP AND MAINTAIN AUTOMATED WORKFLOWS</div>
+    </div>
+
+    <div class="tool">
+      <div class="tool-controls">
+        <div>
+          <label>Customer segment</label>
+          <select id="p-seg">
+            <option value="new">New activators (month 2)</option>
+            <option value="drifting">Drifting (30–90 days)</option>
+            <option value="dormant">Dormant (90+ days)</option>
+          </select>
+        </div>
+        <div>
+          <label>Trigger</label>
+          <select id="p-trig">
+            <option value="inactivity">Inactivity</option>
+            <option value="underuse">Feature underuse</option>
+            <option value="churnrisk">Churn-risk score</option>
+          </select>
+        </div>
+        <div>
+          <label>Primary channel</label>
+          <select id="p-chan">
+            <option>Push notification</option>
+            <option>Email</option>
+            <option>In-app banner</option>
+          </select>
+        </div>
+      </div>
+      <button class="tool-generate" id="p-go">Generate playbook</button>
+
+      <div class="tool-output" id="p-out">
+        <div class="rec-title" id="p-title">Playbook #01</div>
+        <dl>
+          <dt>WHY THIS SEGMENT</dt><dd id="p-why"></dd>
+          <dt>MECHANIC</dt><dd id="p-mechanic"></dd>
+          <dt>TEST TO RUN</dt><dd id="p-test"></dd>
+          <dt>PRIMARY KPI</dt><dd id="p-kpi"></dd>
+          <dt>RISK</dt><dd id="p-risk"></dd>
+          <dt>NEXT STEP</dt><dd id="p-next"></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">The one real campaign I've already run</div>
+    <h2>Tobipets × McDonald's — verified, not illustrative.</h2>
+    <span class="verified-tag" style="margin-top:16px;">VERIFIED — from my own CV, not a simulation</span>
+
+    <div class="evidence">
+      <p class="lede" style="font-size:16px;">I engineered the automated communication workflows and lifecycle marketing funnels behind a national brand partnership campaign, then used those same workflows to run retention-focused lifecycle campaigns on the existing base.</p>
+      <div class="evidence-stats">
+        <div class="evidence-stat"><div class="evidence-num">11,400+</div><div class="evidence-label">Leads captured</div></div>
+        <div class="evidence-stat"><div class="evidence-num">350+</div><div class="evidence-label">Conversions</div></div>
+        <div class="evidence-stat"><div class="evidence-num">+15%</div><div class="evidence-label">Customer retention lift</div></div>
+      </div>
+      <p class="lede" style="margin-top:22px; font-size:15px;">What I'd bring from this to N26: I've built the CRM automation, not just briefed it — I know what breaks in a lifecycle workflow at 2am, and how to keep it running.</p>
+    </div>
+  </div>
+</section>
+
+<section class="tint">
+  <div class="wrap">
+    <div class="kicker">How I'd work day to day</div>
+    <h2>The role, in its own three parts.</h2>
+    <div class="role-tag" style="margin-top:0;">ROLE ALIGNMENT → OPERATIONAL EXCELLENCE + ANALYTIC MASTERY + STRATEGIC LEADERSHIP</div>
+
+    <div class="timeline-track">
+      <div class="tl-phase">
+        <div class="pct">OPERATIONAL EXCELLENCE</div>
+        <h4>Execute, reliably</h4>
+        <ul>
+          <li>Multi-channel campaigns built and QA'd against plan</li>
+          <li>Automated workflows maintained, not just launched</li>
+          <li>Cross-functional handoffs kept clean and on time</li>
+        </ul>
+      </div>
+      <div class="tl-phase">
+        <div class="pct">ANALYTIC MASTERY</div>
+        <h4>Test, then trust the data</h4>
+        <ul>
+          <li>A/B tests run on send-time, copy, and channel mix</li>
+          <li>Close partnership with data analytics &amp; engineering</li>
+          <li>KPI ownership — reported, not just tracked</li>
+        </ul>
+      </div>
+      <div class="tl-phase">
+        <div class="pct">STRATEGIC LEADERSHIP</div>
+        <h4>Plan the next campaign</h4>
+        <ul>
+          <li>New strategic campaigns scoped with the CRM team</li>
+          <li>Segmentation tied to company-level retention goals</li>
+          <li>Learnings fed back into the next playbook</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="kicker">The profile</div>
+    <h2>Why me.</h2>
+
+    <div class="stack">
+      <div class="stack-item">CRM &amp; LIFECYCLE AUTOMATION</div><div class="stack-plus">+</div>
+      <div class="stack-item">DATA &amp; REPORTING INFRASTRUCTURE</div><div class="stack-plus">+</div>
+      <div class="stack-item">CROSS-FUNCTIONAL EXECUTION</div><div class="stack-plus">+</div>
+      <div class="stack-item">TEST-AND-LEARN MINDSET</div><div class="stack-plus">+</div>
+      <div class="stack-item">INDUSTRIAL ENGINEERING</div>
+      <div class="stack-arrow">↓</div>
+      <div class="stack-result">RETENTION THAT COMPOUNDS</div>
+    </div>
+
+    <div class="proof-grid">
+      <div class="proof"><div class="tag">CRM BUILD</div><div class="big">HubSpot automation, end to end</div><p>Engineered automated communication workflows and lifecycle marketing funnels in HubSpot — the exact discipline this role calls "conceptualise, set up and maintain."</p></div>
+      <div class="proof"><div class="tag">DATA</div><div class="big">SQL &amp; unified CRM data model</div><p>Architected a unified CRM data model across HubSpot and ClickHouse, and diagnosed production data bugs before they reached reporting.</p></div>
+      <div class="proof"><div class="tag">SCALE</div><div class="big">10-person commercial team</div><p>Currently lead a cross-functional commercial team, translating stakeholder needs into the workflows and dashboards the business runs on.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="final" id="talk">
+  <div class="wrap">
+    <h2>Your turn, N26.</h2>
+    <p>I've shown you how I'd read the lifecycle. Now I'd love to see how your team reads it.</p>
+    <a href="mailto:monsealva31221@gmail.com" class="cta-btn">Let's talk about Retention →</a>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap" style="display:flex; justify-content:space-between; width:100%;">
+    <span>Retention Control — Monserrat Álvarez</span>
+    <span>Independent case study · Not affiliated with N26</span>
+  </div>
+</footer>
+
+<script>
+  // Quick-nav scrollspy
+  const navTiles = Array.from(document.querySelectorAll('.tile[href^="#"]'));
+  const tileTargets = navTiles.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const tileSpy = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const tile = navTiles.find(a => a.getAttribute('href') === '#' + entry.target.id);
+      if(!tile) return;
+      if(entry.isIntersecting){
+        navTiles.forEach(t=>t.classList.remove('current'));
+        tile.classList.add('current');
+      }
+    });
+  }, {rootMargin:'-40% 0px -50% 0px', threshold:0});
+  tileTargets.forEach(t=>tileSpy.observe(t));
+
+  // Retention Playbook Builder — rule-based, all 9 segment×trigger combos
+  const playbooks = {
+    'new|inactivity': {
+      why:'A month-2 customer who has already gone quiet usually never built the habit in the first place — this is an onboarding-to-engagement handoff gap.',
+      mechanic:'A single, specific nudge back to the one action that defines "activated" for this product area — not a generic "come back" message.',
+      test:'A/B test a feature-specific nudge vs. a generic reactivation message.',
+      kpi:'Time-to-second-session',
+      risk:'Too many early nudges can read as spammy before trust is built.',
+      next:'Cap this journey at 2 touches before escalating to the drifting-segment playbook.'
+    },
+    'new|underuse': {
+      why:'The customer is active but only using one feature — habit isn\u2019t forming around the product\u2019s core value yet.',
+      mechanic:'A short in-app tour of one adjacent feature, triggered by usage pattern, not a fixed day count.',
+      test:'Test triggering by behaviour vs. a fixed day-3 send.',
+      kpi:'Feature adoption rate',
+      risk:'Over-teaching too many features at once dilutes the message.',
+      next:'Pick the single highest-retention-correlated feature to lead with.'
+    },
+    'new|churnrisk': {
+      why:'A high churn-risk score this early usually means the very first experience didn\u2019t land, not that the customer is simply slow to engage.',
+      mechanic:'A direct, human-toned check-in message rather than an automated feature push.',
+      test:'Test tone: automated vs. more personal copy.',
+      kpi:'Response/engagement rate on the check-in',
+      risk:'A high-touch message at scale needs careful segmentation or it feels inauthentic.',
+      next:'Limit to the top-decile risk score before scaling the mechanic.'
+    },
+    'drifting|inactivity': {
+      why:'A customer 30-90 days in who\u2019s gone inactive is the highest-value save in the lifecycle \u2014 they\u2019ve already formed some habit, it just broke.',
+      mechanic:'Reconnect to whatever specific action they used to repeat, referencing their own past behaviour.',
+      test:'Test personalised "you used to..." messaging vs. generic win-back copy.',
+      kpi:'Reactivation rate within 14 days',
+      risk:'Referencing specific past behaviour requires clean, reliable behavioural data \u2014 a data-quality risk more than a messaging one.',
+      next:'Validate behavioural data freshness with data engineering before launch.'
+    },
+    'drifting|underuse': {
+      why:'Partial usage at this stage often means the customer found one value but hit friction expanding to others.',
+      mechanic:'Surface a simplified path to the underused feature, not a full re-tour.',
+      test:'Test a simplified one-step flow vs. the standard help-center link.',
+      kpi:'Feature completion rate post-nudge',
+      risk:'Assuming the friction is discoverability when it might be a real product gap.',
+      next:'Pair with a qualitative check \u2014 a short in-app survey \u2014 before scaling the fix.'
+    },
+    'drifting|churnrisk': {
+      why:'A rising risk score in the drifting window is the clearest early-warning signal this role is meant to catch.',
+      mechanic:'A value-reinforcement message paired with a low-friction incentive to return.',
+      test:'Test incentive vs. no-incentive value message on a matched sample.',
+      kpi:'30-day retention lift vs. control',
+      risk:'Incentives can train customers to wait for one before returning.',
+      next:'Set a frequency cap so this mechanic isn\u2019t the default first response.'
+    },
+    'dormant|inactivity': {
+      why:'Past 90 days, inactivity alone is no longer a warning \u2014 it\u2019s the baseline. The bar for what gets their attention is higher.',
+      mechanic:'A "what\u2019s new since you left" message anchored to real product changes, not a generic nudge.',
+      test:'Test relevance of the specific update referenced vs. a generic win-back message.',
+      kpi:'Reactivation rate',
+      risk:'Low expected response rate at this stage \u2014 budget and effort should match.',
+      next:'Treat this as a lower-frequency, lower-cost channel (email) rather than push.'
+    },
+    'dormant|underuse': {
+      why:'A dormant customer who once used the product heavily but stopped is different from one who barely engaged \u2014 they know the value already.',
+      mechanic:'Remind them of their own past usage, framed as "pick up where you left off."',
+      test:'Test usage-based social proof vs. a plain reactivation offer.',
+      kpi:'Reactivation rate among high-historical-usage dormants',
+      risk:'Requires reliable historical usage data at the individual level.',
+      next:'Segment dormant customers by historical usage depth before sending.'
+    },
+    'dormant|churnrisk': {
+      why:'At 90+ days with a maxed-out churn score, this is effectively a last-attempt segment, not a routine nudge.',
+      mechanic:'A single, clear, low-pressure message \u2014 acknowledging distance rather than pretending it didn\u2019t happen.',
+      test:'Test message tone (acknowledging vs. standard) on response rate.',
+      kpi:'Response rate, then reactivation rate among responders',
+      risk:'Diminishing returns \u2014 don\u2019t over-invest engineering effort in a low-probability segment.',
+      next:'Cap this to one well-crafted touch rather than a full automated sequence.'
+    }
+  };
+
+  document.getElementById('p-go').addEventListener('click', ()=>{
+    const seg = document.getElementById('p-seg');
+    const trig = document.getElementById('p-trig');
+    const chan = document.getElementById('p-chan').value;
+    const key = seg.value + '|' + trig.value;
+    const pb = playbooks[key];
+
+    document.getElementById('p-title').textContent = seg.selectedOptions[0].text + ' — ' + trig.selectedOptions[0].text + ' (' + chan + ')';
+    document.getElementById('p-why').textContent = pb.why;
+    document.getElementById('p-mechanic').textContent = pb.mechanic;
+    document.getElementById('p-test').textContent = pb.test;
+    document.getElementById('p-kpi').textContent = pb.kpi;
+    document.getElementById('p-risk').textContent = pb.risk;
+    document.getElementById('p-next').textContent = pb.next;
+
+    const out = document.getElementById('p-out');
+    out.classList.remove('show');
+    void out.offsetWidth;
+    out.classList.add('show');
+  });
+</script>
+
+</body>
+</html>
